@@ -1,52 +1,197 @@
-
-<!DOCTYPE html>
-<html lang="zh">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>我的第一款游戏</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#111827">
+<title>狼人杀反转对决 · 原型 0.1</title>
 <style>
-body {
-  margin: 0;
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  background: #171923;
-  color: white;
-  font-family: system-ui, sans-serif;
-  text-align: center;
-}
-main { padding: 24px; }
-h1 { color: #a5b4fc; }
-#score { font-size: 56px; margin: 24px; }
-button {
-  border: 0;
-  border-radius: 16px;
-  padding: 18px 30px;
-  font-size: 20px;
-  background: #818cf8;
-  color: #111827;
-  font-weight: bold;
-}
-button:active { transform: scale(.95); }
+:root{--bg:#0b1020;--panel:#151d31;--panel2:#202b43;--text:#eef2ff;--muted:#a9b5cf;--gold:#f5c96a;--red:#f87171;--blue:#7dd3fc;--green:#86efac}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1c2944,#0b1020 65%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{padding:16px 14px 10px;text-align:center}h1{font-size:21px;margin:0 0 5px}header p{margin:0;color:var(--muted);font-size:12px}
+main{max-width:900px;margin:auto;padding:0 10px 28px}.panel{background:rgba(21,29,49,.96);border:1px solid #34415e;border-radius:15px;padding:12px;margin:10px 0;box-shadow:0 8px 24px #0002}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}.muted{color:var(--muted)}.small{font-size:12px}.pill{display:inline-block;border:1px solid #52617f;border-radius:99px;padding:4px 8px;font-size:12px;color:var(--muted)}
+button,select{font:inherit;color:var(--text);background:#2c3b59;border:1px solid #52617f;border-radius:10px;padding:9px 11px;cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}button.primary{background:#b88b2e;color:#15110a;border-color:#f5c96a;font-weight:700}button.danger{background:#642e3b;border-color:#a94c60}button.ghost{background:transparent}button.active{outline:2px solid var(--gold)}
+h2{font-size:15px;margin:0 0 9px}.status{font-size:13px;line-height:1.5}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.stat{background:#0f1729;border-radius:10px;padding:9px;text-align:center}.stat strong{display:block;font-size:20px}.stat span{font-size:11px;color:var(--muted)}
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.card{position:relative;min-height:92px;border-radius:11px;border:1px solid #64748b;background:linear-gradient(150deg,#263653,#121a2b);padding:7px 5px;text-align:center;display:flex;flex-direction:column;justify-content:space-between;align-items:center;gap:4px;overflow:hidden}.card.back{background:repeating-linear-gradient(135deg,#24395a,#24395a 8px,#1a2943 8px,#1a2943 16px);border-color:#7187ac}.card.front{background:linear-gradient(145deg,#f4f0e5,#d9e0ed);color:#152039;border-color:#f7d98b}.card.selected{outline:3px solid var(--gold);transform:translateY(-1px)}.card.target{box-shadow:inset 0 0 0 3px var(--red)}.card .name{font-size:12px;font-weight:800;line-height:1.2}.card .role{font-size:10px;opacity:.8}.card .pos{font-size:10px;color:var(--muted)}.card.front .pos{color:#46536c}.card .marks{font-size:10px;color:#b91c1c}.card .num{font-size:10px;opacity:.7}.board-wrap{margin-top:8px}.section-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.zone{display:flex;gap:6px;flex-wrap:wrap}.zone-card{font-size:11px;padding:6px 8px;background:#0e1526;border:1px solid #3c4964;border-radius:8px}.log{max-height:210px;overflow:auto;font-size:12px;line-height:1.5;background:#0d1424;border-radius:9px;padding:8px}.log div{padding:3px 0;border-bottom:1px solid #202a40}.log div:last-child{border:0}.actions{display:flex;gap:7px;flex-wrap:wrap}.notice{border-left:3px solid var(--gold);padding:8px 10px;background:#252338;border-radius:4px;font-size:12px;line-height:1.5}.hidden{display:none!important}.field{display:flex;flex-direction:column;gap:5px;flex:1;min-width:130px}.field label{font-size:12px;color:var(--muted)}input{width:100%;font:inherit;background:#0d1424;color:var(--text);border:1px solid #52617f;border-radius:9px;padding:8px}
+@media(min-width:650px){.gamegrid{display:grid;grid-template-columns:1.4fr .9fr;gap:10px}.card{min-height:110px}.card .name{font-size:13px}}
 </style>
 </head>
 <body>
+<header><h1>狼人杀反转对决</h1><p>可玩的单机原型 · 0.1 · 同机双人轮流操作</p></header>
 <main>
-  <h1>我的第一款游戏</h1>
-  <p>点击按钮，收集星星！</p>
-  <div id="score">⭐ 0</div>
-  <button onclick="collect()">收集星星</button>
-  <p id="message">准备好了吗？</p>
+<section class="panel" id="setup">
+  <h2>开局设置</h2>
+  <div class="row">
+    <div class="field"><label>模式</label><select id="mode"><option value="custom">自选卡组</option><option value="random">随机卡组</option></select></div>
+    <div class="field"><label>先手玩家</label><select id="first"><option value="0">玩家 A</option><option value="1">玩家 B</option><option value="coin">掷硬币随机</option></select></div>
+  </div>
+  <p class="muted small">自选模式：为双方各选 3 张狼人、8 张好人、1 张第三方。当前原型会自动补齐缺少的选择。</p>
+  <div id="deckBuilder"></div>
+  <div class="row" style="margin-top:10px"><button class="primary" id="startBtn">开始对决</button><button id="randomizeBtn">随机生成双方卡组</button></div>
+</section>
+
+<section id="game" class="hidden">
+  <div class="panel">
+    <div class="row between"><span class="pill" id="roundPill">第 1 回合 · 夜晚</span><span class="pill" id="priorityPill">先手：玩家 A</span></div>
+    <div class="stats" style="margin-top:9px">
+      <div class="stat"><strong id="apA">3</strong><span>玩家 A 战术点</span></div>
+      <div class="stat"><strong id="apB">3</strong><span>玩家 B 战术点</span></div>
+      <div class="stat"><strong id="stage">夜晚</strong><span>当前阶段</span></div>
+    </div>
+    <p class="status" id="status" style="margin-bottom:0"></p>
+  </div>
+  <div class="gamegrid">
+    <div>
+      <section class="panel">
+        <div class="section-title"><h2 id="boardTitle">玩家 A 的战场</h2><span class="pill" id="boardCounts"></span></div>
+        <p class="muted small" id="privacyHint">仅当前操作玩家可查看自己的卡牌。</p>
+        <div class="board" id="board"></div>
+        <div class="actions" style="margin-top:9px">
+          <button id="revealBtn">主动翻牌（1点）</button><button id="swapBtn">交换位置</button><button id="coverBtn">盖回卡牌</button>
+        </div>
+        <p class="muted small" id="selectionHint">点击卡牌选择目标；再次点击另一张可交换位置。</p>
+      </section>
+      <section class="panel">
+        <h2>战术与行动</h2>
+        <div class="actions">
+          <button id="killBtn">猎杀令（1点）</button><button id="protectBtn">绝对庇护（2点）</button><button id="counterBtn">反制咒令（2点）</button><button id="goodBtn">好人计数 +2（2点）</button><button id="endActionBtn" class="primary">结束我的行动</button>
+        </div>
+        <p class="muted small">此原型先实现基本操作和连锁演示；完整卡牌触发、规则限制与联网仍需后续开发。</p>
+      </section>
+      <section class="panel">
+        <h2>墓地与流放之地</h2>
+        <div class="row"><div style="flex:1"><div class="muted small">墓地</div><div class="zone" id="grave"></div></div><div style="flex:1"><div class="muted small">流放之地</div><div class="zone" id="banish"></div></div></div>
+      </section>
+    </div>
+    <div>
+      <section class="panel">
+        <h2>本回合猎杀目标（秘密选择）</h2>
+        <p class="muted small">切换玩家视角后分别选择目标；选择后锁定。正式版本会隐藏另一方的选择。</p>
+        <div class="row"><button id="setHuntBtn">将所选卡牌设为猎杀目标</button><button id="clearHuntBtn" class="ghost">清除尚未锁定目标</button></div>
+        <div id="huntStatus" class="status" style="margin-top:8px"></div>
+      </section>
+      <section class="panel">
+        <h2>玩家视角</h2>
+        <div class="actions"><button id="viewA" class="active">查看玩家 A</button><button id="viewB">查看玩家 B</button></div>
+        <p class="muted small">单机热座模式：把手机交给另一位玩家前，先切换视角。当前是原型，不是安全的在线隐藏信息系统。</p>
+      </section>
+      <section class="panel">
+        <h2>连锁与行动记录</h2>
+        <div class="log" id="log" aria-live="polite"></div>
+        <div class="actions" style="margin-top:8px"><button id="passResponse">结束响应 / 继续结算</button><button id="nextStage" class="primary">结束阶段</button></div>
+      </section>
+    </div>
+  </div>
+  <section class="panel hidden" id="winnerPanel"><h2 id="winnerTitle">对局结束</h2><p id="winnerText"></p><button id="restartBtn">重新开始</button></section>
+</section>
 </main>
 <script>
-let score = 0;
-function collect() {
-  score++;
-  document.getElementById("score").textContent = "⭐ " + score;
-  document.getElementById("message").textContent =
-    score >= 10 ? "恭喜！你收集了十颗星星！" : "继续加油！";
+const CARD_POOL=[
+{name:'村民',f:'人类',kind:'good',desc:'在场时：每有一名其他翻开的人类，己方好人计数+1'},
+{name:'女巫',f:'人类',kind:'good',desc:'每回合一次：复活己方单位或击杀敌方单位'},
+{name:'预言家',f:'人类',kind:'good',desc:'每回合一次：查看3张任意卡牌'},
+{name:'猎人',f:'人类',kind:'good',desc:'翻牌：击杀一名敌方；死后：击杀一名单位'},
+{name:'守卫',f:'人类',kind:'good',desc:'两条命；每回合一次：保护己方单位免疫一次死亡'},
+{name:'骑士',f:'人类',kind:'good',desc:'每回合一次：与敌方对决；狼人死亡，否则骑士死亡'},
+{name:'魔术师',f:'人类',kind:'good',desc:'翻牌：选择己方单位回合结束时盖回；可交换己方两牌位置'},
+{name:'灵媒',f:'人类',kind:'good',desc:'每回合一次：翻开己方墓地单位并触发其翻牌效果'},
+{name:'忍者',f:'人类',kind:'good',desc:'仅一次：免疫一次死亡、驱逐与效果；翻牌：保护己方单位'},
+{name:'警长',f:'人类',kind:'good',desc:'每回合一次：放逐一名敌方单位'},
+{name:'侦探',f:'人类',kind:'good',desc:'每回合一次：翻开敌方一张牌，使其本回合无法使用技能或效果'},
+{name:'见习生',f:'人类',kind:'good',desc:'两回合后可成为任意人类并获得其技能'},
+{name:'法师',f:'人类',kind:'good',desc:'三种效果各仅一次：击杀、封锁技能、免疫一次死亡'},
+{name:'守林员',f:'人类',kind:'good',desc:'在场时：晚上狼人无法猎杀'},
+{name:'诅咒师',f:'人类',kind:'good',desc:'每回合一次：诅咒敌方，回合结束时死亡；死后也可诅咒'},
+{name:'祭司',f:'人类',kind:'good',desc:'翻牌：取消未结算的连锁效果并结束当前行动；死亡时也触发'},
+{name:'圣人',f:'人类',kind:'good',desc:'翻牌：本回合免疫所有效果；己方人类死亡时查看敌方一张牌'},
+{name:'死灵法师',f:'人类',kind:'good',desc:'翻牌：复活己方已死单位；其本回合不能发动效果'},
+{name:'医生',f:'人类',kind:'good',desc:'翻牌：保护任意单位免疫一次死亡；可抢救己方死亡单位'},
+{name:'白狼王',f:'狼人',kind:'wolf',desc:'翻牌：回合结束击杀敌方；可立即自杀并立即击杀敌方，然后进入夜晚'},
+{name:'狼美人',f:'狼人',kind:'wolf',desc:'翻牌：诱惑敌方，使其不能对狼美人使用技能；离场后可驱逐敌方'},
+{name:'孤狼',f:'狼人',kind:'wolf',desc:'每回合一次：己方仅剩此狼时立即击杀敌方'},
+{name:'空中飞狼',f:'狼人',kind:'wolf',desc:'每回合一次：回合结束击杀敌方；若失败则自身死亡'},
+{name:'血狼',f:'狼人',kind:'wolf',desc:'仅一次：进入血夜并击杀敌方；血夜猎杀无视免疫死亡'},
+{name:'雪狼王',f:'狼人',kind:'wolf',desc:'翻牌及在场时各有一次免疫死亡或驱逐'},
+{name:'魔狼',f:'狼人',kind:'wolf',desc:'每回合一次：复活己方已死狼人'},
+{name:'智狼',f:'狼人',kind:'wolf',desc:'仅一次：代替己方狼人死亡或驱逐；每晚查看敌方两张牌'},
+{name:'异教徒',f:'第三方',kind:'third',desc:'视为人类与第三方；每回合一次：立即杀死一名己方单位'},
+{name:'吸血鬼',f:'第三方',kind:'third',desc:'死后：击杀一名队友后复活自己；目标已死则不能复活'},
+{name:'古代狼',f:'第三方',kind:'third',desc:'视为狼人与第三方；死亡时可由其他翻开的狼人代死'},
+{name:'怨灵',f:'第三方',kind:'third',desc:'死后：回合结束复活，并击杀任意单位'}
+];
+const $=id=>document.getElementById(id);
+let state=null, selected=null, swapFirst=null, chain=[], currentActor=0, consecutivePass=0, pendingAction=null, huntPicks=[null,null], huntLocked=[false,false], logs=[];
+const shuffle=a=>{let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+function makeCard(def,owner,id){return {...def,id,owner,face:false,alive:true,zone:'board',marks:[],shield:0,used:{},life:1,locked:false};}
+function randomDeck(owner){let g=shuffle(CARD_POOL.filter(c=>c.kind==='good')).slice(0,8),w=shuffle(CARD_POOL.filter(c=>c.kind==='wolf')).slice(0,3),t=shuffle(CARD_POOL.filter(c=>c.kind==='third')).slice(0,1);return shuffle([...g,...w,...t]).map((d,i)=>makeCard(d,owner,owner+'-'+i+'-'+Math.random().toString(36).slice(2,6)));}
+function customDeck(owner){let g=CARD_POOL.filter(c=>c.kind==='good').slice(0,8),w=CARD_POOL.filter(c=>c.kind==='wolf').slice(0,3),t=CARD_POOL.filter(c=>c.kind==='third').slice(0,1);return shuffle([...g,...w,...t]).map((d,i)=>makeCard(d,owner,owner+'-'+i+'-'+Math.random().toString(36).slice(2,6)));}
+function log(msg){logs.unshift(msg);$('log').innerHTML=logs.slice(0,80).map(x=>'<div>'+escapeHtml(x)+'</div>').join('');}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function boardCards(p){return state.cards.filter(c=>c.owner===p&&c.zone==='board'&&c.alive).sort((a,b)=>a.slot-b.slot);}
+function cardById(id){return state.cards.find(c=>c.id===id);}
+function frontCount(p){return boardCards(p).filter(c=>c.face&&c.kind==='good').length;}
+function goodCount(p){let n=frontCount(p);for(const c of boardCards(p).filter(c=>c.face&&c.name==='村民'))n+=boardCards(p).filter(x=>x.id!==c.id&&x.face&&x.kind==='good').length;return n+(state.bonus[p]||0);}
+function hasFront(p){return boardCards(p).some(c=>c.slot<4);}
+function validTarget(c,owner,allowBack=false){if(!c||c.zone!=='board'||!c.alive)return false;if(!allowBack&&hasFront(c.owner)&&c.slot>=4)return false;return true;}
+function setupBuilder(){
+ const wrap=$('deckBuilder');wrap.innerHTML='';
+ for(let p=0;p<2;p++){let div=document.createElement('div');div.className='panel';div.style.margin='9px 0';div.innerHTML=`<h2>玩家 ${p?'B':'A'} 卡组</h2><div class="row"><div class="field"><label>好人卡（8张）</label><select multiple size="5" id="g${p}" style="height:115px">${CARD_POOL.filter(c=>c.kind==='good').map(c=>`<option value="${c.name}">${c.name}</option>`).join('')}</select></div><div class="field"><label>狼人卡（3张）</label><select multiple size="5" id="w${p}" style="height:115px">${CARD_POOL.filter(c=>c.kind==='wolf').map(c=>`<option value="${c.name}">${c.name}</option>`).join('')}</select></div><div class="field"><label>第三方卡（1张）</label><select id="t${p}">${CARD_POOL.filter(c=>c.kind==='third').map(c=>`<option value="${c.name}">${c.name}</option>`).join('')}</select></div></div><p class="muted small">多选好人与狼人；如果数量不足或重复，原型会自动补齐。</p>`;wrap.appendChild(div);
+  const gs=div.querySelector('#g'+p),ws=div.querySelector('#w'+p);[...gs.options].slice(0,8).forEach(o=>o.selected=true);[...ws.options].slice(0,3).forEach(o=>o.selected=true);
+ }
 }
+function getCustom(p){let names=[...$('g'+p).selectedOptions].map(o=>o.value),wn=[...$('w'+p).selectedOptions].map(o=>o.value),tn=$('t'+p).value;let defs=CARD_POOL.filter(c=>names.includes(c.name)&&c.kind==='good').slice(0,8);for(const c of shuffle(CARD_POOL.filter(c=>c.kind==='good'&&!defs.some(x=>x.name===c.name))))if(defs.length<8)defs.push(c);let wolves=CARD_POOL.filter(c=>wn.includes(c.name)&&c.kind==='wolf').slice(0,3);for(const c of shuffle(CARD_POOL.filter(c=>c.kind==='wolf'&&!wolves.some(x=>x.name===c.name))))if(wolves.length<3)wolves.push(c);let third=CARD_POOL.find(c=>c.name===tn&&c.kind==='third')||CARD_POOL.find(c=>c.kind==='third');return shuffle([...defs,...wolves,third]).map((d,i)=>makeCard(d,p,p+'-'+i+'-'+Math.random().toString(36).slice(2,6)));}
+function startGame(random=false){
+ let a=random||$('mode').value==='random'?randomDeck(0):getCustom(0),b=random||$('mode').value==='random'?randomDeck(1):getCustom(1);
+ state={cards:[...a,...b],round:1,phase:'夜晚',ap:[3,3],bonus:[0,0],first:$('first').value==='coin'?Math.floor(Math.random()*2):Number($('first').value),active:0,view:0,turnOrder:[],stageStarted:false,ended:false,dead:[],banished:[],winner:null};
+ state.cards.forEach((c,i)=>c.slot=i%12);
+ // shuffle positions within each owner's 12-card battlefield
+ for(let p=0;p<2;p++){let deck=state.cards.filter(c=>c.owner===p);shuffle(deck).forEach((c,i)=>c.slot=i);}
+ state.active=state.first;currentActor=state.first;selected=null;swapFirst=null;chain=[];consecutivePass=0;pendingAction=null;huntPicks=[null,null];huntLocked=[false,false];logs=[];$('setup').classList.add('hidden');$('game').classList.remove('hidden');$('winnerPanel').classList.add('hidden');log('对局开始。玩家 '+(state.first?'B':'A')+' 先手。双方战术点各为 3。');render();
+}
+function currentView(){return state.view;}
+function render(){
+ if(!state)return;let p=state.view,cards=boardCards(p);$('boardTitle').textContent='玩家 '+(p?'B':'A')+' 的战场';$('roundPill').textContent=`第 ${state.round} 回合 · ${state.phase}`;$('priorityPill').textContent='先手：玩家 '+(state.first?'B':'A');$('apA').textContent=state.ap[0];$('apB').textContent=state.ap[1];$('stage').textContent=state.phase;$('boardCounts').textContent=`在场 ${cards.length} · 好人计数 ${goodCount(p)}`;$('status').textContent=`当前操作玩家：${state.active===0?'A':'B'}。查看视角：玩家 ${p===0?'A':'B'}。请在同一设备上轮流操作。`;
+ $('viewA').classList.toggle('active',p===0);$('viewB').classList.toggle('active',p===1);
+ const board=$('board');board.innerHTML='';let slots=Array(12).fill(null);cards.forEach(c=>slots[c.slot]=c);
+ slots.forEach((c,i)=>{let b=document.createElement('button');b.className='card '+(c&&c.face?'front':'back')+(selected===c?.id?' selected':'')+(c&&pendingAction?.target===c.id?' target':'');if(!c){b.innerHTML='<span class="num">'+(i<4?'前排':'后排')+'</span><span>空位</span>';b.disabled=true;board.appendChild(b);return;}let isOwner=p===c.owner;let show=c.face||!isOwner;b.innerHTML=show?`<span class="num">${i<4?'前排':'后排'} · ${c.kind==='good'?'好人':c.kind==='wolf'?'狼人':'第三方'}</span><span class="name">${escapeHtml(c.name)}</span><span class="role">${escapeHtml(c.desc)}</span><span class="marks">${c.marks.join(' · ')}</span>`:`<span class="num">${i<4?'前排':'后排'}</span><span class="name">✦ 暗牌 ✦</span><span class="role">${c.marks.length?'有特殊标记':'身份隐藏'}</span>`;b.onclick=()=>selectCard(c.id);board.appendChild(b);});
+ $('grave').innerHTML=state.cards.filter(c=>c.owner===p&&c.zone==='grave').map(c=>`<span class="zone-card">${c.face?escapeHtml(c.name):'暗牌'}${c.marks.length?' · 标记':''}</span>`).join('')||'<span class="muted small">空</span>';
+ $('banish').innerHTML=state.cards.filter(c=>c.owner===p&&c.zone==='banish').map(c=>`<span class="zone-card">${c.face?escapeHtml(c.name):'暗牌'}</span>`).join('')||'<span class="muted small">空</span>';
+ $('huntStatus').textContent=`玩家 A：${huntLocked[0]?'已锁定目标':huntPicks[0]?'已选择目标（尚未锁定）':'尚未选择'}；玩家 B：${huntLocked[1]?'已锁定目标':huntPicks[1]?'已选择目标（尚未锁定）':'尚未选择'}`;
+ $('selectionHint').textContent=selected?'已选择一张卡牌。再次点击另一张可尝试交换位置。':'点击己方卡牌进行选择。';$('revealBtn').disabled=!selected||!cardById(selected)||cardById(selected).owner!==p||cardById(selected).face||state.ap[p]<1;$('coverBtn').disabled=!selected||!cardById(selected)||cardById(selected).owner!==p||!cardById(selected).face;$('swapBtn').disabled=!selected;
+ checkWinner(false);
+}
+function selectCard(id){if(!state||state.ended)return;let c=cardById(id);if(!c)return;if(swapFirst){let a=cardById(swapFirst);if(a&&a.owner===state.view&&c.owner===state.view&&a.id!==c.id){let s=a.slot;a.slot=c.slot;c.slot=s;log(`玩家 ${state.view?'B':'A'} 调换了 ${a.face?a.name:'一张暗牌'} 与 ${c.face?c.name:'一张暗牌'} 的位置。`);}swapFirst=null;selected=id;render();return;}selected=id;render();}
+function pay(p,n){if(state.ap[p]<n){log('战术点不足。');return false;}state.ap[p]-=n;return true;}
+function reveal(c,voluntary=true){if(!c||c.zone!=='board'||c.face)return false;if(voluntary&&!pay(state.view,1))return false;c.face=true;log(`玩家 ${c.owner?'B':'A'} 翻开了 ${c.name}。`);if(c.name==='猎人'){log('猎人翻牌效果待触发：可选择敌方单位击杀（下一版本完善）。');}if(c.name==='祭司'){log('祭司翻牌：取消未结算连锁效果并结束当前行动（当前原型仅记录规则）。');}if(c.name==='死灵法师'){let dead=state.cards.find(x=>x.owner===c.owner&&x.zone==='grave');if(dead){dead.zone='board';dead.alive=true;dead.slot=findEmpty(c.owner);dead.face=true;dead.marks=[];log('死灵法师复活了一张己方墓地卡牌。');}}checkWinner();return true;}
+function findEmpty(p){let used=new Set(boardCards(p).map(c=>c.slot));for(let i=0;i<12;i++)if(!used.has(i))return i;return 0;}
+function swapSelected(){let c=cardById(selected);if(!c||c.owner!==state.view)return;if(!swapFirst){swapFirst=c.id;$('selectionHint').textContent='已选第一张，请再选择一张己方卡牌。';return;}let a=cardById(swapFirst);if(a&&a.owner===c.owner){let x=a.slot;a.slot=c.slot;c.slot=x;log(`玩家 ${c.owner?'B':'A'} 交换了两张卡牌的位置。`);}swapFirst=null;render();}
+function coverSelected(){let c=cardById(selected);if(!c||c.owner!==state.view||!c.face)return;c.face=false;log(`玩家 ${c.owner?'B':'A'} 将 ${c.name} 盖回背面。`);render();}
+function createEffect(actor,label,targetId,resolve){chain.push({actor,label,target:targetId,resolve,cancelled:false});log(`玩家 ${actor?'B':'A'} 发动：${label}${targetId?'（目标已锁定）':''}。`);consecutivePass=0;render();}
+function resolveChain(){while(chain.length){let e=chain.pop();if(e.cancelled){log(`效果取消：${e.label}。`);continue;}try{e.resolve();}catch(err){log('结算错误：'+err.message);}log(`结算完成：${e.label}。`);}pendingAction=null;checkWinner();render();}
+function killTarget(target,actor,immediate=false){if(!target||target.zone!=='board'||!target.alive){log('猎杀取消：目标在结算前已离场，且不会触发后续效果。');return false;}if(!validTarget(target,actor,false)){log('目标不合法：存在前排时，一般效果不能指定后排。');return false;}if(target.shield>0){target.shield--;log(`${target.name} 免疫了本次击杀。`);return false;}target.alive=false;target.zone='grave';state.dead.push(target.id);log(`${target.name} 被击杀，进入墓地。`);if(target.name==='吸血鬼'){log('吸血鬼死后效果待选择目标；当前原型尚未实现该选择流程。');}if(target.name==='怨灵')log('怨灵死后效果待触发：回合结束复活并击杀任意单位。');return true;}
+function chooseTargetForAction(){let c=cardById(selected);if(!c){log('请先选择一张卡牌。');return null;}return c;}
+function actionKill(){let t=chooseTargetForAction();if(!t)return;let actor=state.view;if(!validTarget(t,actor,false)){log('目标不合法：必须优先选择前排卡牌。');return;}if(!pay(actor,1))return;pendingAction={type:'kill',target:t.id,actor};createEffect(actor,'猎杀令：击杀 '+(t.face?t.name:'暗牌'),t.id,()=>killTarget(cardById(t.id),actor));render();}
+function actionProtect(){let t=chooseTargetForAction();if(!t)return;if(t.owner!==state.view){log('绝对庇护需要选择己方卡牌。');return;}if(!pay(state.view,2))return;t.shield++;createEffect(state.view,'绝对庇护：为目标增加一次死亡免疫',t.id,()=>{log(`${t.face?t.name:'暗牌'}获得一次死亡免疫。`);});render();}
+function actionCounter(){if(!chain.length){log('当前没有可反制的未结算效果。');return;}if(!pay(state.view,2))return;let e=chain[chain.length-1];e.cancelled=true;log(`玩家 ${state.view?'B':'A'} 反制了尚未结算的效果：${e.label}。`);render();}
+function actionGood(){if(!pay(state.view,2))return;state.bonus[state.view]+=2;createEffect(state.view,'好人计数本回合 +2',null,()=>log(`玩家 ${state.view?'B':'A'} 的本回合好人计数 +2。`));render();}
+function setHunt(){let t=chooseTargetForAction();if(!t)return;let p=state.view;if(huntLocked[p]){log('该玩家猎杀目标已经锁定，不能更改。');return;}if(!boardCards(p).some(c=>c.kind==='wolf')){log(`玩家 ${p?'B':'A'} 没有在场狼人，不能猎杀。`);return;}huntPicks[p]=t.id;huntLocked[p]=true;log(`玩家 ${p?'B':'A'} 已秘密锁定猎杀目标。`);render();}
+function clearHunt(){let p=state.view;if(huntLocked[p]){log('猎杀目标已锁定，不能清除。');return;}huntPicks[p]=null;render();}
+function endAction(){if(state.ended)return;log(`玩家 ${state.view?'B':'A'} 结束当前行动。`);consecutivePass++;if(consecutivePass>=2){if(chain.length)resolveChain();else advanceStage();}else{state.view=1-state.view;state.active=state.view;log(`轮到玩家 ${state.view?'B':'A'} 响应或行动。`);render();}}
+function passResponse(){if(chain.length){if(consecutivePass>=1){resolveChain();consecutivePass=0;}else endAction();}else endAction();}
+function advanceStage(){
+ if(state.phase==='夜晚'){
+  // resolve both secretly chosen hunts as chain actions, then move to morning
+  for(let p=0;p<2;p++){if(huntPicks[p]){let t=cardById(huntPicks[p]);if(boardCards(p).some(c=>c.kind==='wolf')){chain.push({actor:p,label:'夜晚猎杀',target:huntPicks[p],resolve:()=>killTarget(t,p)});log(`玩家 ${p?'B':'A'} 的猎杀目标进入结算队列。`);}}}
+  if(chain.length){resolveChain();}
+  state.phase='早晨';state.view=state.first;state.active=state.first;consecutivePass=0;log('进入早晨阶段。');huntPicks=[null,null];huntLocked=[false,false];render();
+ }else{
+  let a=goodCount(0),b=goodCount(1);log(`早晨结束：玩家 A 好人计数 ${a}，玩家 B 好人计数 ${b}。`);
+  if(a>b)log('玩家 A 获得一次驱逐权（原型下一步加入选择驱逐目标）。');else if(b>a)log('玩家 B 获得一次驱逐权（原型下一步加入选择驱逐目标）。');else log('双方好人计数相同，本回合没有驱逐权。');
+  state.round++;state.phase='夜晚';state.ap=[3,3];state.bonus=[0,0];state.first=1-state.first;state.view=state.first;state.active=state.first;consecutivePass=0;huntPicks=[null,null];huntLocked=[false,false];log(`进入第 ${state.round} 回合，双方战术点恢复至 3。可以重新调整布局。`);render();
+ }
+}
+function checkWinner(show=true){if(!state||state.ended)return;let alive=[0,1].map(p=>boardCards(p));let normal=[];for(let p=0;p<2;p++){let enemy=alive[1-p].length, nonThird=alive[p].filter(c=>c.kind!=='third').length;if(enemy===0||nonThird===0)normal.push(p);}if(alive[0].length===0&&alive[1].length===0){state.ended=true;state.winner='平局';}else if(normal.length){state.ended=true;state.winner=normal.length===2?'平局':normal[0]===0?'玩家 A':'玩家 B';}if(state.ended&&show){$('winnerPanel').classList.remove('hidden');$('winnerTitle').textContent=state.winner==='平局'?'平局！':state.winner+' 获胜！';$('winnerText').textContent='对局结束。胜利条件在当前已实现的结算节点检查；完整死后效果与第三方特殊胜利将在后续版本补齐。';log('对局结束：'+state.winner+'。');}}
+$('startBtn').onclick=()=>startGame(false);$('randomizeBtn').onclick=()=>startGame(true);$('viewA').onclick=()=>{state.view=0;selected=null;swapFirst=null;render()};$('viewB').onclick=()=>{state.view=1;selected=null;swapFirst=null;render()};$('revealBtn').onclick=()=>{let c=cardById(selected);if(c&&c.owner===state.view)reveal(c,true);render()};$('coverBtn').onclick=coverSelected;$('swapBtn').onclick=swapSelected;$('killBtn').onclick=actionKill;$('protectBtn').onclick=actionProtect;$('counterBtn').onclick=actionCounter;$('goodBtn').onclick=actionGood;$('setHuntBtn').onclick=setHunt;$('clearHuntBtn').onclick=clearHunt;$('endActionBtn').onclick=endAction;$('passResponse').onclick=passResponse;$('nextStage').onclick=advanceStage;$('restartBtn').onclick=()=>{state=null;$('game').classList.add('hidden');$('setup').classList.remove('hidden');};setupBuilder();
 </script>
-</body>
-</html>
+</body></html>
