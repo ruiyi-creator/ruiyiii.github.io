@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的第一款游戏</title>
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #171923;
+  color: white;
+  font-family: system-ui, sans-serif;
+  text-align: center;
+}
+main { padding: 24px; }
+h1 { color: #a5b4fc; }
+#score { font-size: 56px; margin: 24px; }
+button {
+  border: 0;
+  border-radius: 16px;
+  padding: 18px 30px;
+  font-size: 20px;
+  background: #818cf8;
+  color: #111827;
+  font-weight: bold;
+}
+button:active { transform: scale(.95); }
+</style>
+</head>
+<body>
+<main>
+  <h1>我的第一款游戏</h1>
+  <p>点击按钮，收集星星！</p>
+  <div id="score">⭐ 0</div>
+  <button onclick="collect()">收集星星</button>
+  <p id="message">准备好了吗？</p>
+</main>
+<script>
+let score = 0;
+function collect() {
+  score++;
+  document.getElementById("score").textContent = "⭐ " + score;
+  document.getElementById("message").textContent =
+    score >= 10 ? "恭喜！你收集了十颗星星！" : "继续加油！";
+}
+</script>
+</body>
+</html>
